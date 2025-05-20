@@ -1,0 +1,7 @@
+ apiVersion: v2
+ name: msa-ingress
+ description: A Helm chart for MSA Ingress Configuration
+ type: application
+ version: 0.1.0
+ appVersion: "1.0.0"
+ 

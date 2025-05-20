@@ -1,0 +1,23 @@
+template:
+  fullname: init-ingress
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-next-upstream-timeout: "300"
+  hosts:
+    - host: "k8s-node-02-404414479.ap-northeast-2.elb.amazonaws.com"
+      paths:
+        - path: /team3
+          pathType: Prefix
+          serviceName: team3-front-service
+          servicePort: 80
+        - path: /
+          pathType: Prefix
+          serviceName: init-page
+          servicePort: 80
+
