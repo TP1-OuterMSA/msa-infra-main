@@ -12,9 +12,9 @@ ingress:
   hosts:
     - host: "k8s-node-02-404414479.ap-northeast-2.elb.amazonaws.com"
       paths:
-        - path: /team3
+        - path: /team3/analytics
           pathType: Prefix
-          serviceName: team3-front-service
+          serviceName: team03-fe
           servicePort: 80
         - path: /
           pathType: Prefix
