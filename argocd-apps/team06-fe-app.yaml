@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: team06-fe
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/TP1-OuterMSA/msa-infra-main.git
+    targetRevision: HEAD
+    path: charts/services/team06-fe
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: front-space
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
