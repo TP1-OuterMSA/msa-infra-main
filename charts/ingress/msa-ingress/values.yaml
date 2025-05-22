@@ -12,6 +12,10 @@ ingress:
   hosts:
     - host: "k8s-node-02-404414479.ap-northeast-2.elb.amazonaws.com"
       paths:
+        - path: /team1
+          pathType: Prefix
+          serviceName: team01-fe
+          servicePort: 80
         - path: /team2
           pathType: Prefix
           serviceName: team02-fe
@@ -19,6 +23,18 @@ ingress:
         - path: /team3
           pathType: Prefix
           serviceName: team03-fe
+          servicePort: 80
+        - path: /team4
+          pathType: Prefix
+          serviceName: team04-fe
+          servicePort: 80
+        - path: /team5
+          pathType: Prefix
+          serviceName: team05-fe
+          servicePort: 80
+        - path: /team6
+          pathType: Prefix
+          serviceName: team06-fe
           servicePort: 80
         - path: /
           pathType: Prefix

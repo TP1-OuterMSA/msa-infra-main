@@ -1,0 +1,39 @@
+template:
+  label: "team04-fe"
+  replicaCount: 1
+  nameOverride: "team04-fe"
+  fullnameOverride: "team04-fe"
+  image:
+    repository: "809691348554.dkr.ecr.ap-northeast-2.amazonaws.com/team04-fe-repository"
+    tag: "sha-42cfcc1"
+    pullPolicy: Always
+    imagePullSecrets: [regcred]
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 80
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+    hosts:
+      - host: "k8s-msaservices-7d023f0bb9-676035063.ap-northeast-2.elb.amazonaws.com"
+        paths:
+          - path: /
+            pathType: Prefix
+            serviceName: team04-fe   # 실제 서비스 이름으로 변경
+            servicePort: 80 
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 80
+
+  
