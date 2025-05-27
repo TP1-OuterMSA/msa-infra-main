@@ -8,13 +8,9 @@ template:
     type: Recreate
 
   image:
-    repository: 809691348554.dkr.ecr.ap-northeast-2.amazonaws.com/team01-be-production-repo
+    repository:  $AWS_ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com/team01-be-production-repo
     pullPolicy: Always
-    tag: "sha-tag"
-
-  vault:
-    enabled: true
-    environment: "dev"
+    tag: "production"
 
   prometheus:
     enabled: true
