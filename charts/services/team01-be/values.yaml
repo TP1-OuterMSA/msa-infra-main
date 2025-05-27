@@ -10,7 +10,7 @@ template:
   image:
     repository:  $AWS_ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com/team01-be-production-repo
     pullPolicy: Always
-    tag: "production"
+    tag: "sha-66ae0b7"
 
   prometheus:
     enabled: true
