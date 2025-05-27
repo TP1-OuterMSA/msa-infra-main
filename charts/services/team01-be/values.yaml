@@ -32,6 +32,10 @@ autoscaling:
 
 service:
   port: 8080
+  
+serviceAccount:
+  create: true
+  name: team01-be
 
 serviceAccountName: "team01-be"
 
