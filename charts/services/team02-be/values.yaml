@@ -1,39 +1,10 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: team02-be
-  labels:
-    app: team02-be
-spec:
-  replicas: {{ .Values.replicaCount | default 1 }}
-  selector:
-    matchLabels:
-      app: team02-be
-  template:
-    metadata:
-      labels:
-        app: team02-be
-    spec:
-      serviceAccountName: {{ .Values.serviceAccountName | default "team02-be" }}
-      containers:
-        - name: team02-be
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
-          ports:
-            - name: http
-              containerPort: {{ .Values.containerPort | default 8080 }}
-          env:
-            - name: SPRING_CONFIG_LOCATION
-              value: classpath:/application.yml
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-            initialDelaySeconds: 10
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
-            initialDelaySeconds: 10
-            periodSeconds: 10
+replicaCount: 1
+
+serviceAccountName: team02-be
+
+image:
+  repository: 809691348554.dkr.ecr.ap-northeast-2.amazonaws.com/team02-be-production-repo
+  tag: sha-abcdef1 
+  pullPolicy: IfNotPresent
+
+containerPort: 8080
