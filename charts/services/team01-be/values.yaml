@@ -31,6 +31,10 @@ template:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 70
+    
+  service:
+    port: 8080
+
 
   serviceAccountName: "team01-be"
 
