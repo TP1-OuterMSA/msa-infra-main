@@ -36,7 +36,8 @@ service:
 serviceAccount:
   create: true
   name: team01-be
-
+ingress:
+  enabled: false
 serviceAccountName: "team01-be"
 
 env: {}
