@@ -30,6 +30,8 @@ autoscaling:
   maxReplicas: 5
   targetCPUUtilizationPercentage: 70
 
+imagePullSecrets:
+  - name: ecr-pull-secret
 
   
 serviceAccount:
