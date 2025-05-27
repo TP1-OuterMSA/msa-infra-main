@@ -38,6 +38,10 @@ serviceAccount:
   name: team01-be
 ingress:
   enabled: false
+service:
+  port: 8080
+  type: ClusterIP
+
 serviceAccountName: "team01-be"
 
 env: {}
