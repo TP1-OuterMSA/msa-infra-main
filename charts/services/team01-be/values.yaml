@@ -2,6 +2,8 @@
 nameOverride: "team01-be"
 fullnameOverride: "team01-be"
 
+replicaCount: 1
+
 strategy:
   type: Recreate
 
@@ -37,12 +39,43 @@ autoscaling:
 serviceAccount:
   create: true
   name: team01-be
+
 ingress:
   enabled: false
+
 service:
   port: 8080
+  targetPort: 8080
   type: ClusterIP
 
 serviceAccountName: "team01-be"
+
+# Pod annotations (빈 객체로 초기화)
+podAnnotations: {}
+
+# Security contexts (기본값)
+podSecurityContext: {}
+securityContext: {}
+
+# Probes (기본 비활성화)
+livenessProbe:
+  enabled: false
+  path: /actuator/health
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  enabled: false
+  path: /actuator/health
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+# Node selector, affinity, tolerations
+nodeSelector: {}
+affinity: {}
+tolerations: []
+
+# Image pull secrets
+imagePullSecrets: []
 
 env: {}
