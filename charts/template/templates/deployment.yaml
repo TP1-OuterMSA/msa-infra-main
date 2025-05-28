@@ -6,28 +6,27 @@ metadata:
     {{- include "template.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.replicaCount | default 1 }}
   {{- end }}
   selector:
     matchLabels:
       {{- include "template.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+        {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- if .Values.vault.enabled }}
-      annotations:
+        {{- end }}
+        {{- if .Values.vault.enabled }}
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/role: "{{ include "template.name" . }}"
-        vault.hashicorp.com/agent-inject-secret-application.yml: "msa-back/{{ include "template.name" . }}/{{ .Values.vault.environment }}"
+        vault.hashicorp.com/agent-inject-secret-application.yml: "msa-back/data/{{ include "template.name" . }}/{{ .Values.vault.environment }}"
         vault.hashicorp.com/agent-inject-template-application.yml: |
           {{`{{- with secret "msa-back/data/`}}{{ include "template.name" . }}{{`/`}}{{ .Values.vault.environment }}{{`" -}}
           {{ .Data.data.application_yml }}
           {{- end }}`}}
         vault.hashicorp.com/agent-pre-populate-only: "true"
-      {{- end }}
+        {{- end }}
       labels:
         {{- include "template.selectorLabels" . | nindent 8 }}
     spec:
@@ -46,7 +45,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.targetPort }}
+              containerPort: {{ .Values.service.targetPort | default .Values.service.port }}
               protocol: TCP
           {{- if not .Values.vault.enabled }}
           env:
@@ -54,12 +53,6 @@ spec:
             - name: {{ $key }}
               value: "{{ $value }}"
             {{- end }}
-          {{- end }}
-          {{- if .Values.vault.enabled }}
-          volumeMounts:
-            - name: config-volume
-              mountPath: /app/application.yml
-              subPath: application.yml
           {{- end }}
           {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
@@ -79,11 +72,6 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-      {{- if .Values.vault.enabled }}
-      volumes:
-        - name: config-volume
-          emptyDir: {}
-      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
