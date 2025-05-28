@@ -1,4 +1,3 @@
-# 수정된 values.yaml
 nameOverride: "team01-be"
 fullnameOverride: "team01-be"
 
