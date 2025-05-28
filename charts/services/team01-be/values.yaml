@@ -34,6 +34,11 @@ autoscaling:
   maxReplicas: 5
   targetCPUUtilizationPercentage: 70
 
+serviceAccount:
+  create: true
+  name: team01-be
+ingress:
+  enabled: false
 service:
   port: 8080
   type: ClusterIP
