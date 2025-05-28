@@ -21,9 +21,9 @@ spec:
       annotations:
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/role: "{{ include "template.name" . }}"
-        vault.hashicorp.com/agent-inject-secret-application.yml: "msa/{{ include "template.name" . }}/{{ .Values.vault.environment }}"
+        vault.hashicorp.com/agent-inject-secret-application.yml: "msa-back/{{ include "template.name" . }}/{{ .Values.vault.environment }}"
         vault.hashicorp.com/agent-inject-template-application.yml: |
-          {{`{{- with secret "msa/`}}{{ include "template.name" . }}{{`/`}}{{ .Values.vault.environment }}{{`" -}}
+          {{`{{- with secret "msa-back/`}}{{ include "template.name" . }}{{`/`}}{{ .Values.vault.environment }}{{`" -}}
           {{ .Data.data.application_yml }}
           {{- end }}`}}
         vault.hashicorp.com/agent-pre-populate-only: "true"
