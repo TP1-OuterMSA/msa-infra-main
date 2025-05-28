@@ -17,17 +17,29 @@ spec:
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if .Values.vault.enabled }}
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "{{ include "template.name" . }}"
+        vault.hashicorp.com/agent-inject-secret-application.yml: "msa/{{ include "template.name" . }}/{{ .Values.vault.environment }}"
+        vault.hashicorp.com/agent-inject-template-application.yml: |
+          {{`{{- with secret "msa/`}}{{ include "template.name" . }}{{`/`}}{{ .Values.vault.environment }}{{`" -}}
+          {{ .Data.data.application_yml }}
+          {{- end }}`}}
+        vault.hashicorp.com/agent-pre-populate-only: "true"
+      {{- end }}
       labels:
         {{- include "template.selectorLabels" . | nindent 8 }}
     spec:
-    {{- with .Values.imagePullSecrets }}
+      serviceAccountName: {{ include "template.name" . }}
+      {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
+      {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ include "template.name" . }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -36,16 +48,24 @@ spec:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
+          {{- if not .Values.vault.enabled }}
           env:
             {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
               value: "{{ $value }}"
             {{- end }}
+          {{- end }}
+          {{- if .Values.vault.enabled }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/application.yml
+              subPath: application.yml
+          {{- end }}
           {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
               path: {{ .Values.livenessProbe.path }}
-              port: 80
+              port: http
             initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
           {{- end }}
@@ -53,12 +73,17 @@ spec:
           readinessProbe:
             httpGet:
               path: {{ .Values.readinessProbe.path }}
-              port: 80
+              port: http
             initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
           {{- end }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}   # ✅ 올바른 위치
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- if .Values.vault.enabled }}
+      volumes:
+        - name: config-volume
+          emptyDir: {}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
