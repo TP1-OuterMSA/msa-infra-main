@@ -23,7 +23,7 @@ spec:
         vault.hashicorp.com/role: "{{ include "template.name" . }}"
         vault.hashicorp.com/agent-inject-secret-application.yml: "msa-back/{{ include "template.name" . }}/{{ .Values.vault.environment }}"
         vault.hashicorp.com/agent-inject-template-application.yml: |
-          {{`{{- with secret "msa-back/`}}{{ include "template.name" . }}{{`/`}}{{ .Values.vault.environment }}{{`" -}}
+          {{`{{- with secret "msa-back/data/`}}{{ include "template.name" . }}{{`/`}}{{ .Values.vault.environment }}{{`" -}}
           {{ .Data.data.application_yml }}
           {{- end }}`}}
         vault.hashicorp.com/agent-pre-populate-only: "true"
