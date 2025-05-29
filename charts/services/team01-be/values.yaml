@@ -1,81 +1,45 @@
-# team01-be values
-nameOverride: "team01-be"
-fullnameOverride: "team01-be"
+template:
+  nameOverride: "team01-be"
+  fullnameOverride: "team01-be"
 
-replicaCount: 1
+  strategy:
+    type: Recreate
 
-strategy:
-  type: Recreate
+  image:
+    repository: 809691348554.dkr.ecr.ap-northeast-2.amazonaws.com/team01-be-production-repo
+    pullPolicy: Always
+    tag: "sha-66d648a"
 
-image:
-  repository: 809691348554.dkr.ecr.ap-northeast-2.amazonaws.com/team01-be-development-repo
-  pullPolicy: Always
-  tag: "sha-66d648a"
+  prometheus:
+    enabled: true
+    scrape: "true"
+    path: "/actuator/prometheus"
+    port: "8080"
 
-vault:
-  enabled: true
-  environment: "dev"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
 
-prometheus:
-  enabled: true
-  scrape: "true"
-  path: "/actuator/prometheus"
-  port: "8080"
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
 
-resources:
-  limits:
-    cpu: 500m
-    memory: 512Mi
-  requests:
-    cpu: 200m
-    memory: 256Mi
+  serviceAccountName: "team01-be"
 
-autoscaling:
-  enabled: true
-  minReplicas: 1
-  maxReplicas: 5
-  targetCPUUtilizationPercentage: 70
+  env: {}
 
-serviceAccount:
-  create: true
-  name: team01-be
+  volumes:
+    - name: config-volume
+      secret:
+        secretName: team01-config
 
-ingress:
-  enabled: false
-
-service:
-  port: 8080
-  targetPort: 8080
-  type: ClusterIP
-
-serviceAccountName: "team01-be"
-
-# Pod annotations (빈 객체로 초기화)
-podAnnotations: {}
-
-# Security contexts (기본값)
-podSecurityContext: {}
-securityContext: {}
-
-# Probes (기본 비활성화)
-livenessProbe:
-  enabled: false
-  path: /actuator/health
-  initialDelaySeconds: 30
-  periodSeconds: 10
-
-readinessProbe:
-  enabled: false
-  path: /actuator/health
-  initialDelaySeconds: 5
-  periodSeconds: 10
-
-# Node selector, affinity, tolerations
-nodeSelector: {}
-affinity: {}
-tolerations: []
-
-# Image pull secrets
-imagePullSecrets: []
-
-env: {}
+  volumeMounts:
+    - name: config-volume
+      mountPath: /vault/secrets
+      readOnly: true
