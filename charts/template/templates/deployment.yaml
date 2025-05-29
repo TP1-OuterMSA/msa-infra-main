@@ -6,7 +6,7 @@ metadata:
     {{- include "template.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount | default 1 }}
+  replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
@@ -14,18 +14,13 @@ spec:
   template:
     metadata:
       annotations:
+        {{- if .Values.prometheus.enabled }}
+        prometheus.io/scrape: "{{ .Values.prometheus.scrape }}"
+        prometheus.io/path: "{{ .Values.prometheus.path }}"
+        prometheus.io/port: "{{ .Values.prometheus.port }}"
+        {{- end }}
         {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}
-        {{- if .Values.vault.enabled }}
-        vault.hashicorp.com/agent-inject: "true"
-        vault.hashicorp.com/role: "{{ include "template.name" . }}"
-        vault.hashicorp.com/agent-inject-secret-application.yml: "msa-back/data/{{ include "template.name" . }}/{{ .Values.vault.environment }}"
-        vault.hashicorp.com/agent-inject-template-application.yml: |
-          {{`{{- with secret "msa-back/data/`}}{{ include "template.name" . }}{{`/`}}{{ .Values.vault.environment }}{{`" -}}
-          {{ .Data.data.application_yml }}
-          {{- end }}`}}
-        vault.hashicorp.com/agent-pre-populate-only: "true"
         {{- end }}
       labels:
         {{- include "template.selectorLabels" . | nindent 8 }}
@@ -45,32 +40,44 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.targetPort | default .Values.service.port }}
+              containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
           {{- if not .Values.vault.enabled }}
+      volumes:
+        {{- if .Values.volumes }}
+        {{ toYaml .Values.volumes | indent 8 }}
+        {{- end }}
           env:
             {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
               value: "{{ $value }}"
             {{- end }}
           {{- end }}
-          {{- if .Values.livenessProbe.enabled }}
+          {{- if and .Values.livenessProbe .Values.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
-              path: {{ .Values.livenessProbe.path }}
+              path: {{ .Values.livenessProbe.path | default "/actuator/health" }}
               port: http
-            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds | default 60 }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds | default 30 }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds | default 30 }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold | default 3 }}
           {{- end }}
-          {{- if .Values.readinessProbe.enabled }}
+          {{- if and .Values.readinessProbe .Values.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
-              path: {{ .Values.readinessProbe.path }}
+              path: {{ .Values.readinessProbe.path | default "/actuator/health" }}
               port: http
-            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds | default 30 }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds | default 10 }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds | default 30 }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold | default 3 }}
           {{- end }}
           resources:
+          volumeMounts:
+            {{- if .Values.volumeMounts }}
+            {{ toYaml .Values.volumeMounts | indent 12 }}
+            {{- end }}
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
