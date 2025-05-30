@@ -18,6 +18,11 @@ resources:
 
 autoscaling:
   enabled: false
+  
+serviceAccount:
+  create: true
+  name: team03-be
+
 
 secret:
   name: team03-config # 쿠버 시크릿 이름
