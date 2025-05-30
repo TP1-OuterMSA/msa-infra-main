@@ -32,7 +32,7 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    containers:
+      containers:
         - name: {{ .Chart.Name }}
           {{- with .Values.securityContext }}
           securityContext:
@@ -40,6 +40,8 @@ spec:
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - "--spring.config.import=optional:file:/vault/secrets/application.yml"
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -52,8 +54,6 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          args: ["--spring.config.import=optional:file:/vault/secrets/application.yml"]
-          
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
