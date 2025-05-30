@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: 809691348554.dkr.ecr.ap-northeast-2.amazonaws.com/team03-be-production-repo
   pullPolicy: Always
-  tag: "sha-abc1234" # CD 파이프라인에서 자동 변경됨
+  tag: "sha-7fa0f89" # CD 파이프라인에서 자동 변경됨
 
 service:
   port: 8080
