@@ -51,7 +51,6 @@ volumes:
 
 podAnnotations: {}
 podLabels: {}
-imagePullSecrets: []
 nodeSelector: {}
 affinity: {}
 tolerations: {}
