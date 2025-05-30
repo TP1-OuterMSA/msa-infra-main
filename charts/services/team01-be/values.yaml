@@ -10,6 +10,9 @@ template:
     pullPolicy: Always
     tag: "sha-66d648a"
 
+  imagePullSecrets:
+    - name: ecr-pull-secret
+
   prometheus:
     enabled: true
     scrape: "true"
@@ -32,7 +35,9 @@ template:
 
   serviceAccountName: "team01-be"
 
-  env: {}
+  env:
+    - name: SPRING_CONFIG_LOCATION
+      value: file:/vault/secrets/application.yaml
 
   volumes:
     - name: config-volume
