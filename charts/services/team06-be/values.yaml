@@ -7,7 +7,7 @@ strategy:
 image:
   repository: 809691348554.dkr.ecr.ap-northeast-2.amazonaws.com/team02-be-production-repo
   pullPolicy: Always
-  tag: "sha-66ae0b7"
+  tag: "sha-b6805ed"
 
 prometheus:
   enabled: true
