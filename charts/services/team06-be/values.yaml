@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: 809691348554.dkr.ecr.ap-northeast-2.amazonaws.com/team03-be-production-repo
+  repository: 809691348554.dkr.ecr.ap-northeast-2.amazonaws.com/team06-be-production-repo
   pullPolicy: Always
   tag: "sha-518499b" 
 
@@ -26,7 +26,7 @@ autoscaling:
   
 serviceAccount:
   create: true
-  name: team03-be
+  name: team06-be
 
 ingress:
   enabled: false  # 필요시 true
@@ -36,7 +36,7 @@ ingress:
 
 
 secret:
-  name: team03-config # 쿠버 시크릿 이름
+  name: team06-config # 쿠버 시크릿 이름
 
 volumeMounts:
   - name: config-volume
@@ -47,7 +47,7 @@ volumeMounts:
 volumes:
   - name: config-volume
     secret:
-      secretName: team03-config
+      secretName: team06-config
 
 podAnnotations: {}
 podLabels: {}
