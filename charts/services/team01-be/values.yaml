@@ -1,50 +1,55 @@
-template:
-  nameOverride: "team01-be"
-  fullnameOverride: "team01-be"
+replicaCount: 1
 
-  strategy:
-    type: Recreate
+image:
+  repository: 809691348554.dkr.ecr.ap-northeast-2.amazonaws.com/team01-be-production-repo
+  pullPolicy: Always
+  tag: "sha-xxxxxxxx" 
 
-  image:
-    repository: 809691348554.dkr.ecr.ap-northeast-2.amazonaws.com/team01-be-production-repo
-    pullPolicy: Always
-    tag: "sha-66d648a"
+service:
+  type: ClusterIP
+  port: 8080
 
-  imagePullSecrets:
-    - name: ecr-pull-secret
+imagePullSecrets:
+  - name: image-pull-secret
 
-  prometheus:
-    enabled: true
-    scrape: "true"
-    path: "/actuator/prometheus"
-    port: "8080"
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 200m
+    memory: 256Mi
 
-  resources:
-    limits:
-      cpu: 500m
-      memory: 512Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
+autoscaling:
+  enabled: false
 
-  autoscaling:
-    enabled: true
-    minReplicas: 1
-    maxReplicas: 5
-    targetCPUUtilizationPercentage: 70
+serviceAccount:
+  create: true
+  name: team01-be
 
-  serviceAccountName: "team01-be"
+ingress:
+  enabled: false
+  annotations: {}
+  hosts: []
+  tls: []
 
-  env:
-    - name: SPRING_CONFIG_LOCATION
-      value: file:/vault/secrets/application.yaml
+secret:
+  name: team01-config
 
-  volumes:
-    - name: config-volume
-      secret:
-        secretName: team01-config
+volumeMounts:
+  - name: config-volume
+    mountPath: /vault/secrets/application.yml
+    subPath: application.yml
+    readOnly: true
 
-  volumeMounts:
-    - name: config-volume
-      mountPath: /vault/secrets
-      readOnly: true
+volumes:
+  - name: config-volume
+    secret:
+      secretName: team01-config
+
+podAnnotations: {}
+podLabels: {}
+nodeSelector: {}
+affinity: {}
+tolerations: {}
+securityContext: {}
