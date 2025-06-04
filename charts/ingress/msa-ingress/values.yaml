@@ -48,11 +48,11 @@ ingress:
         - path: /api/team2
           pathType: Prefix
           serviceName: team02-be
-          servicePort: 80
-        - path: /api/team3/analytics
+          servicePort: 8080
+        - path: /api/team3/
           pathType: Prefix
           serviceName: team03-be
-          servicePort: 80
+          servicePort: 8080
         - path: /api/team4
           pathType: Prefix
           serviceName: team04-be
@@ -64,9 +64,6 @@ ingress:
         - path: /api/team6
           pathType: Prefix
           serviceName: team06-be
-        - path: /team3/analytics
-          pathType: Prefix
-          serviceName: team03-fe
-          servicePort: 80
+
 
 
