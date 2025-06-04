@@ -5,7 +5,7 @@ template:
   fullnameOverride: "team02-fe"
   image:
     repository: "809691348554.dkr.ecr.ap-northeast-2.amazonaws.com/team02-fe-repository"
-    tag: "sha-0e4b0a0"
+    tag: "sha-1dc1942-main"
     pullPolicy: Always
     imagePullSecrets: [regcred]
   service:
