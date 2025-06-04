@@ -64,6 +64,7 @@ ingress:
         - path: /api/team6
           pathType: Prefix
           serviceName: team06-be
+          servicePort: 80
 
 
 
