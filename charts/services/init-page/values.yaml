@@ -5,7 +5,7 @@ template:
   fullnameOverride: "init-page"
   image:
     repository: "809691348554.dkr.ecr.ap-northeast-2.amazonaws.com/initpage"
-    tag: "sha-23a570f-main"
+    tag: "sha-6aa3250"
     pullPolicy: Always
     imagePullSecrets: [regcred]
   service:
