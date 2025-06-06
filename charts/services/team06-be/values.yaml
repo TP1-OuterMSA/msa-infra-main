@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: 809691348554.dkr.ecr.ap-northeast-2.amazonaws.com/team06-be-production-repo
   pullPolicy: Always
-  tag: "sha-518499b" 
+  tag: "sha-08f4c7e" 
 
 service:
   type: ClusterIP
